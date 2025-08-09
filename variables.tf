@@ -68,3 +68,8 @@ variable "vpc_cni_version" {
   description = "Versão desejada do addon VPC-CNI"
   type = string
 }
+
+variable "coredns_version" {
+  description = "Versão desejada do addon CoreDNS"
+  type = string
+}

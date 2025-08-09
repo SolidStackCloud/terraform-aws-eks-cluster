@@ -1,10 +1,10 @@
 variable "region" {
   description = "Região onde os recursos serão construídos"
-  type = string
+  type        = string
 }
 variable "project_name" {
   description = "Nome do projeto"
-  type = string
+  type        = string
 }
 
 variable "solidstack_vpc_module" {
@@ -45,19 +45,19 @@ variable "vpc_cidr" {
 
 variable "cluster_version" {
   description = "Versão do cluster EKS desejada."
-  type = string
+  type        = string
 }
 
 variable "endpoint_public_access" {
   description = "Deseja habilitar o acesso público a API do cluster?"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "endpoint_private_access" {
   description = "Deseja habilitar o acesso privado a API do cluster?"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 
@@ -66,10 +66,25 @@ variable "endpoint_private_access" {
 
 variable "vpc_cni_version" {
   description = "Versão desejada do addon VPC-CNI"
-  type = string
+  type        = string
 }
 
 variable "coredns_version" {
   description = "Versão desejada do addon CoreDNS"
-  type = string
+  type        = string
+}
+
+variable "kube_proxy" {
+  description = "Versão desejada do addon Kube-Proxy"
+  type        = string
+}
+
+variable "eks_pod_identity_agent" {
+  description = "Versão desejada do addon EKS-Pod-Identity-Agent"
+  type        = string
+}
+
+variable "metrics_server" {
+  description = "Versão desejada do addon Metrics-Server"
+  type        = string
 }

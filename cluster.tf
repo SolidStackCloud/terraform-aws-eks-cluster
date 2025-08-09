@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "main" {
-  name = "${var.project_name}-cluster"
-  role_arn = aws_iam_role.cluster.arn
-  version = var.cluster_version
+  name                      = "${var.project_name}-cluster"
+  role_arn                  = aws_iam_role.cluster.arn
+  version                   = var.cluster_version
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   zonal_shift_config {
     enabled = true
@@ -13,12 +13,12 @@ resource "aws_eks_cluster" "main" {
   }
   vpc_config {
     endpoint_private_access = var.endpoint_private_access
-    endpoint_public_access = var.endpoint_public_access
-    subnet_ids = var.solidstack_vpc_module ? tolist(split(",", data.aws_ssm_parameter.pods_subnet[0].value)) : var.pods_subnets
+    endpoint_public_access  = var.endpoint_public_access
+    subnet_ids              = var.solidstack_vpc_module ? tolist(split(",", data.aws_ssm_parameter.pods_subnet[0].value)) : var.pods_subnets
   }
 
 
-  depends_on = [ aws_iam_role.cluster, aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy ]
+  depends_on = [aws_iam_role.cluster, aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy]
 }
 
 resource "aws_iam_role" "cluster" {

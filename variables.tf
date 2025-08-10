@@ -88,3 +88,47 @@ variable "metrics_server" {
   description = "Versão desejada do addon Metrics-Server"
   type        = string
 }
+
+## Karpenter
+
+variable "karpenter_version" {
+  description = "The version of the Karpenter Helm chart to install."
+  type        = string
+  default     = "1.6.0"
+}
+
+variable "ami_family" {
+  description = "The AMI family for the nodes."
+  type        = string
+  default     = "Bottlerocket"
+}
+
+variable "ami_id" {
+  description = "The AMI ID for the nodes."
+  type        = string
+  default     = ""
+}
+
+variable "nodepool_consolidate_after" {
+  description = "The duration after which Karpenter will consolidate nodes."
+  type        = string
+  default     = "5m"
+}
+
+variable "nodepool_instance_families" {
+  description = "The instance families for the NodePool."
+  type        = list(string)
+  default     = ["m5", "c5", "c6a", "m6a", "c7a"]
+}
+
+variable "nodepool_capacity_types" {
+  description = "The capacity types for the NodePool."
+  type        = list(string)
+  default     = ["spot", "on-demand"]
+}
+
+variable "nodepool_instance_sizes" {
+  description = "The instance sizes for the NodePool."
+  type        = list(string)
+  default     = ["large", "xlarge", "2xlarge"]
+}

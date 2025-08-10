@@ -74,6 +74,11 @@ variable "coredns_version" {
   type        = string
 }
 
+variable "addon_efs_csi_version"{
+  description = "Versão desejada do addon addon_efs_csi_version"
+  type = string
+}
+
 variable "kube_proxy" {
   description = "Versão desejada do addon Kube-Proxy"
   type        = string
@@ -131,4 +136,10 @@ variable "nodepool_instance_sizes" {
   description = "The instance sizes for the NodePool."
   type        = list(string)
   default     = ["large", "xlarge", "2xlarge"]
+}
+
+
+variable "grafana_host" {
+  description = "URL utilizada para configurar o Service e Gateway do Istio para o Grafana"
+  type        = string
 }

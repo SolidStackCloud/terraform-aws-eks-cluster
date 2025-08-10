@@ -27,7 +27,11 @@ resource "helm_release" "karpenter" {
       value = aws_sqs_queue.karpenter.name
     },
     {
-      name  = "settings.spotToSpotConsolidation"
+      name  = "settings.featureGates.nodeRepair"
+      value = true
+    },
+        {
+      name  = "settings.featureGates.spotToSpotConsolidation"
       value = true
     }
   ]

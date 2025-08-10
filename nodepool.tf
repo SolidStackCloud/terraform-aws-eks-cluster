@@ -3,7 +3,7 @@ resource "kubectl_manifest" "nodepool" {
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: "default-karpenter--nodepool"
+  name: "default-karpenter-nodepool"
   namespace: karpenter
 spec:
   disruption:

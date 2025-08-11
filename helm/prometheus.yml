@@ -1,7 +1,6 @@
 prometheus:
   enabled: true
   prometheusSpec:
-
     # nodeSelector:
     #   karpenter.sh/nodepool: "prometheus"
 

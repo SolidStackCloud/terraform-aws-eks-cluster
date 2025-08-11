@@ -13,7 +13,7 @@ resource "aws_efs_mount_target" "grafana" {
 
 
   file_system_id = aws_efs_file_system.grafana.id
-  subnet_id = tolist(aws_eks_cluster.main.vpc_config[0].subnet_ids)[count.index]
+  subnet_id      = tolist(aws_eks_cluster.main.vpc_config[0].subnet_ids)[count.index]
   security_groups = [
     aws_security_group.efs.id
   ]
@@ -34,10 +34,10 @@ reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 YAML
 
-depends_on = [ 
+  depends_on = [
     aws_eks_cluster.main,
     helm_release.karpenter
- ]
+  ]
 }
 
 
@@ -57,29 +57,29 @@ resource "aws_efs_mount_target" "prometheus" {
 
 
   file_system_id = aws_efs_file_system.prometheus.id
-  subnet_id = tolist(aws_eks_cluster.main.vpc_config[0].subnet_ids)[count.index]
+  subnet_id      = tolist(aws_eks_cluster.main.vpc_config[0].subnet_ids)[count.index]
   security_groups = [
     aws_security_group.efs.id
   ]
 }
 
 resource "aws_security_group" "efs" {
-    name   = format("%s-efs", var.project_name)
-    vpc_id = data.aws_ssm_parameter.vpc[0].value
-    
-    ingress {
-        from_port   = 2049
-        to_port     = 2049
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  name   = format("%s-efs", var.project_name)
+  vpc_id = data.aws_ssm_parameter.vpc[0].value
 
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  ingress {
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "kubectl_manifest" "prometheus_efs_storage_class" {
@@ -97,10 +97,10 @@ reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 YAML
 
-depends_on = [ 
+  depends_on = [
     aws_eks_cluster.main,
     helm_release.karpenter
- ]
+  ]
 }
 
 data "aws_iam_policy_document" "efs_role" {

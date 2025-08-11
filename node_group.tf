@@ -8,7 +8,7 @@ resource "aws_eks_node_group" "main" {
   node_role_arn   = aws_iam_role.workers_nodes.arn
   subnet_ids      = var.solidstack_vpc_module ? tolist(split(",", data.aws_ssm_parameter.pods_subnet[0].value)) : var.pods_subnets
   instance_types  = ["c6i.large"]
-  disk_size = "100"
+  disk_size       = "100"
   ami_type        = "BOTTLEROCKET_x86_64"
 
   node_repair_config {
@@ -25,7 +25,7 @@ resource "aws_eks_node_group" "main" {
   }
 
   lifecycle {
-    ignore_changes = [ scaling_config.0.min_size, scaling_config.0.max_size, scaling_config.0.desired_size ]
+    ignore_changes = [scaling_config.0.min_size, scaling_config.0.max_size, scaling_config.0.desired_size]
   }
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.

@@ -74,9 +74,9 @@ variable "coredns_version" {
   type        = string
 }
 
-variable "addon_efs_csi_version"{
+variable "addon_efs_csi_version" {
   description = "Versão desejada do addon addon_efs_csi_version"
-  type = string
+  type        = string
 }
 
 variable "kube_proxy" {
@@ -142,4 +142,24 @@ variable "nodepool_instance_sizes" {
 variable "grafana_host" {
   description = "URL utilizada para configurar o Service e Gateway do Istio para o Grafana"
   type        = string
+}
+
+variable "certificado_listiner_443" {
+
+}
+
+variable "network_loadbalancer_ssl_policy" {
+
+}
+
+variable "istio_cpu_threshold" {
+
+}
+
+variable "istio_min_replicas" {
+
+}
+
+variable "istio_version" {
+
 }

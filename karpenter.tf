@@ -4,7 +4,7 @@ resource "helm_release" "karpenter" {
   create_namespace = true
   chart            = "oci://public.ecr.aws/karpenter/karpenter"
   version          = var.karpenter_version
-  force_update = true
+  force_update     = true
   set = [
     {
       name  = "settings.clusterName"
@@ -12,7 +12,7 @@ resource "helm_release" "karpenter" {
     },
     {
       name  = "settings.clusterEndpoint"
-      value = aws_eks_cluster.main.endpoint 
+      value = aws_eks_cluster.main.endpoint
     },
     {
       name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
@@ -30,13 +30,13 @@ resource "helm_release" "karpenter" {
       name  = "settings.featureGates.nodeRepair"
       value = true
     },
-        {
+    {
       name  = "settings.featureGates.spotToSpotConsolidation"
       value = true
     }
   ]
 
-  depends_on = [ aws_eks_fargate_profile.karpenter ]
+  depends_on = [aws_eks_fargate_profile.karpenter]
 }
 
 resource "aws_iam_instance_profile" "karpenter" {

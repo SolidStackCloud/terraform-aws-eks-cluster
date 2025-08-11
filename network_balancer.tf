@@ -25,7 +25,7 @@ resource "aws_alb_listener" "listiner_443" {
   ssl_policy        = var.network_loadbalancer_ssl_policy
   certificate_arn   = var.certificado_listiner_443
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_alb_target_group.main.arn
   }
 }

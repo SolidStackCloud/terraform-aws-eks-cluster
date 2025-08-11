@@ -17,6 +17,7 @@ resource "aws_efs_mount_target" "grafana" {
   security_groups = [
     aws_security_group.efs.id
   ]
+  depends_on = [helm_release.karpenter]
 }
 
 resource "kubectl_manifest" "grafana_efs_storage_class" {

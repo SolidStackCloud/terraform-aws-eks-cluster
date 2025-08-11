@@ -37,7 +37,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "${var.grafana_host}" 
+    - "grafana.${var.dominio}" 
 YAML
 }
 
@@ -50,7 +50,7 @@ metadata:
   namespace: prometheus
 spec:
   hosts:
-  - "${var.grafana_host}"
+  - "grafana.${var.dominio}"
   gateways:
   - grafana
   http:

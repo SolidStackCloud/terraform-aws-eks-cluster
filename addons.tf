@@ -12,6 +12,8 @@ resource "aws_eks_addon" "coredns" {
   addon_version               = var.coredns_version
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
+
+  depends_on = [helm_release.karpenter]
 }
 
 resource "aws_eks_addon" "kube_proxy" {

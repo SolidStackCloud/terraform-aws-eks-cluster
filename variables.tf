@@ -138,12 +138,6 @@ variable "nodepool_instance_sizes" {
   default     = ["large", "xlarge", "2xlarge"]
 }
 
-
-variable "grafana_host" {
-  description = "URL utilizada para configurar o Service e Gateway do Istio para o Grafana"
-  type        = string
-}
-
 variable "certificado_listiner_443" {
 
 }
@@ -161,5 +155,9 @@ variable "istio_min_replicas" {
 }
 
 variable "istio_version" {
+
+}
+
+variable "dominio" {
 
 }

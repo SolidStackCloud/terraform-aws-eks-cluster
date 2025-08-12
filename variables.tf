@@ -31,12 +31,6 @@ variable "privates_subnets" {
   default     = []
 }
 
-variable "vpc_id" {
-  description = "ID da VPC onde o serviço será implantado. Usado apenas se 'solidstack_vpc_module' for false."
-  type        = string
-  default     = ""
-}
-
 variable "vpc_cidr" {
   description = "Bloco CIDR da VPC. Usado para a regra de entrada do security group. Usado apenas se 'solidstack_vpc_module' for false."
   type        = string
@@ -94,70 +88,4 @@ variable "metrics_server" {
   type        = string
 }
 
-## Karpenter
 
-variable "karpenter_version" {
-  description = "The version of the Karpenter Helm chart to install."
-  type        = string
-  default     = "1.6.0"
-}
-
-variable "ami_family" {
-  description = "The AMI family for the nodes."
-  type        = string
-  default     = "Bottlerocket"
-}
-
-variable "ami_id" {
-  description = "The AMI ID for the nodes."
-  type        = string
-  default     = ""
-}
-
-variable "nodepool_consolidate_after" {
-  description = "The duration after which Karpenter will consolidate nodes."
-  type        = string
-  default     = "5m"
-}
-
-variable "nodepool_instance_families" {
-  description = "The instance families for the NodePool."
-  type        = list(string)
-  default     = ["m5", "c5", "c6a", "m6a", "c7a"]
-}
-
-variable "nodepool_capacity_types" {
-  description = "The capacity types for the NodePool."
-  type        = list(string)
-  default     = ["spot", "on-demand"]
-}
-
-variable "nodepool_instance_sizes" {
-  description = "The instance sizes for the NodePool."
-  type        = list(string)
-  default     = ["large", "xlarge", "2xlarge"]
-}
-
-variable "certificado_listiner_443" {
-
-}
-
-variable "network_loadbalancer_ssl_policy" {
-
-}
-
-variable "istio_cpu_threshold" {
-
-}
-
-variable "istio_min_replicas" {
-
-}
-
-variable "istio_version" {
-
-}
-
-variable "dominio" {
-
-}

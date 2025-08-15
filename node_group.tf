@@ -7,7 +7,7 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "${var.project_name}-node-group-default"
   node_role_arn   = aws_iam_role.workers_nodes.arn
   subnet_ids      = var.solidstack_vpc_module ? tolist(split(",", data.aws_ssm_parameter.pods_subnet[0].value)) : var.pods_subnets
-  instance_types  = ["c6i.large"]
+  instance_types  = ["t3.medium"]
   disk_size       = "100"
   ami_type        = "BOTTLEROCKET_x86_64"
 

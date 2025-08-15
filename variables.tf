@@ -117,7 +117,7 @@ variable "ami_type" {
 
 variable "instance_types" {
   description = "Famílias de instâncias a serem usadas pelos nodes."
-  default = ["t3", "m5", "c5"]
+  default = ["c6i.large"]
   type = list(string)
 }
 

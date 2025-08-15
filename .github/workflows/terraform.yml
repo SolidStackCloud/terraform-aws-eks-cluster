@@ -1,0 +1,17 @@
+name: "Workflow"
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      aws-assume-role-arn:
+        type: string
+        required: true
+      aws-region:
+        type: string
+        required: true
+      aws-s3-bucket-statefile:
+        type: string
+        required: true

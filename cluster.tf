@@ -2,14 +2,14 @@ resource "aws_eks_cluster" "main" {
   name                      = "${var.project_name}-cluster"
   role_arn                  = aws_iam_role.cluster.arn
   version                   = var.cluster_version
-  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  enabled_cluster_log_types = var.cluster_log_types
   zonal_shift_config {
     enabled = true
   }
 
 
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
+    authentication_mode = var.authentication_mode
   }
   vpc_config {
     endpoint_private_access = var.endpoint_private_access

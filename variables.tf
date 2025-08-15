@@ -88,4 +88,88 @@ variable "metrics_server" {
   type        = string
 }
 
+variable "cluster_log_types" {
+  description = "Variável utilizada para especificar quais tipos de logs serão habilitados no cluster EKS"
+  default = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  type = list(string)
+}
 
+variable "authentication_mode" {
+  description = "Determina o tipo de autenticação permitido no cluster EKS"
+  default = "API_AND_CONFIG_MAP"
+  type = string
+}
+
+
+### NODE GROUP
+
+variable "disk_size" {
+  description = "Determina o tamanho do disco do Node"
+  default = "100"
+  type = string
+}
+
+variable "ami_type" {
+  description = "Determina o time de sistema operacional utilizado pelo nodes."
+  default = "BOTTLEROCKET_x86_64"
+  type = string
+}
+
+variable "instance_types" {
+  description = "Famílias de instâncias a serem usadas pelos nodes."
+  default = ["t3", "m5", "c5"]
+  type = list(string)
+}
+
+variable "scaling_config" {
+  description = "Utilizada para configurar o autoscaling do node group."
+  default = {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
+  }
+  type = object({
+    desired_size = number
+    max_size     = number
+    min_size     = number
+  })
+}
+
+
+variable "add_rule_cluster_security_group" {
+  
+  type = map(object({
+      cidr_blocks       = list(string)
+      from_port         = number
+      to_port           = number
+      protocol          = string
+      description       = string
+  }))
+  
+  default = {
+    "NodePort" = {
+      cidr_blocks       = ["0.0.0.0/0"]
+      from_port         = 30000
+      to_port           = 32768
+      protocol          = "tcp"
+      description       = "Nodeports"
+      type              = "ingress"
+    }
+    "CoreDNS" = {
+      cidr_blocks       = ["0.0.0.0/0"]
+      from_port         = 53
+      to_port           = 53
+      protocol          = "udp"
+      description       = "CoreDNS"
+    }
+    "CoreDNS" = {
+      cidr_blocks       = ["0.0.0.0/0"]
+      from_port         = 53
+      to_port           = 53
+      protocol          = "tcp"
+      description       = "CoreDNS"
+    }
+  }
+  
+  
+}

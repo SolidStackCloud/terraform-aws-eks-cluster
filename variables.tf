@@ -89,3 +89,22 @@ variable "metrics_server" {
 }
 
 
+#### Node Group
+
+variable "nodegroup_instance_types" {
+  description = "Utilizada para especificar os tipos de instâncias do NodeGroup"
+  type = list(string)
+  default = ["c6i.large"]
+}
+
+variable "ami_type" {
+  description = "Utilizada para especificar o AMI id utilizado pelo NodeGroup"
+  type = string
+  default = "BOTTLEROCKET_x86_64"
+}
+
+variable "disk_size" {
+  description = "Ajustes no tamanho do disco das instâncais do NodeGroup"
+  type = string
+  default = "100"
+}

@@ -4,16 +4,17 @@
 
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.project_name}-node-group-default"
+  node_group_name = "${var.project_name}-NodeGroup-default"
   node_role_arn   = aws_iam_role.workers_nodes.arn
   subnet_ids      = var.solidstack_vpc_module ? tolist(split(",", data.aws_ssm_parameter.pods_subnet[0].value)) : var.pods_subnets
-  instance_types  = ["c6i.large"]
-  disk_size       = "100"
-  ami_type        = "BOTTLEROCKET_x86_64"
+  instance_types  = var.nodegroup_instance_types
+  disk_size       = var.disk_size
+  ami_type        = var.ami_type
 
   node_repair_config {
     enabled = true
   }
+  
   scaling_config {
     desired_size = 1
     max_size     = 2

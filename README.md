@@ -1,106 +1,92 @@
 # Terraform AWS EKS Thanos Cluster
 
-## Introdução
+Este módulo do Terraform provisiona um cluster Amazon EKS (Elastic Kubernetes Service) na AWS. Ele é projetado para ser flexível e pode ser usado com ou sem um módulo VPC pré-existente.
 
-Este projeto Terraform provisiona um cluster Amazon EKS (Elastic Kubernetes Service) na AWS, com o Karpenter para gerenciamento automático de nós. A configuração é otimizada para a execução de cargas de trabalho do Thanos mode :), garantindo alta disponibilidade e escalabilidade.
+## Funcionalidades
 
-## Arquitetura
+- Criação de um cluster EKS.
+- Configuração de um Node Group inicial.
+- Instalação de addons essenciais do EKS:
+  - `vpc-cni`
+  - `coredns`
+  - `kube-proxy`
+  - `eks-pod-identity-agent`
+  - `metrics-server`
+  - `aws-efs-csi-driver`
+- Configuração de regras de Security Group para o cluster.
+- Armazenamento do nome do cluster no AWS Systems Manager Parameter Store.
 
-A arquitetura deste cluster EKS foi projetada para ser robusta, segura e econômica. Abaixo estão os principais componentes da arquitetura:
+## Como usar
 
-- **Cluster EKS:** O coração da nossa infraestrutura, orquestrando nossos contêineres.
-- **Karpenter:** Para o gerenciamento de nós, o Karpenter é utilizado em vez do Auto Scaling Group tradicional. O Karpenter provisiona e desprovisiona nós de forma mais eficiente, respondendo diretamente às necessidades de agendamento de pods do Kubernetes.
-- **NodePools e EC2NodeClass:** O Karpenter é configurado com `NodePools` para instâncias on-demand e spot, permitindo uma otimização de custos. A `EC2NodeClass` define a configuração base para os nós, como AMIs e tipos de instância.
-- **Fargate:** O namespace do Karpenter é executado em um perfil Fargate, eliminando a necessidade de gerenciar nós para o próprio Karpenter.
-- **IAM Roles for Service Accounts (IRSA):** As permissões da AWS são concedidas aos pods do Kubernetes de forma segura, associando papéis do IAM a contas de serviço do Kubernetes.
-- **Addons do EKS:** O cluster é provisionado com os addons essenciais do EKS, como VPC CNI, CoreDNS, Kube-proxy e o EBS CSI Driver.
+### Pré-requisitos
 
-## Recursos Implementados
+- Terraform v1.0.0 ou superior.
+- Credenciais da AWS configuradas.
 
-Este módulo Terraform cria os seguintes recursos na AWS:
+### Exemplo de uso
 
-- **Amazon EKS Cluster:** O cluster Kubernetes gerenciado.
-- **Amazon EKS Addons:**
-    - `vpc-cni`: Para a rede de pods.
-    - `coredns`: Para a resolução de nomes no cluster.
-    - `kube-proxy`: Para o balanceamento de carga de rede.
-    - `aws-ebs-csi-driver`: Para o gerenciamento de volumes EBS.
-- **AWS Fargate Profile:** Para executar os pods do Karpenter.
-- **IAM Roles and Policies:** Papéis e políticas do IAM para o cluster EKS, Karpenter e nós de trabalho.
-- **Amazon SQS Queue:** Uma fila SQS para o Karpenter gerenciar interrupções de instâncias spot.
-- **Helm Release for Karpenter:** Instalação do Karpenter no cluster via Helm.
-- **Recursos Customizados do Karpenter:**
-    - `EC2NodeClass`: Para definir a configuração dos nós.
-    - `NodePool`: Para gerenciar os conjuntos de nós.
+```terraform
+module "eks_cluster" {
+  source = "./"
 
-## Pré-requisitos
+  project_name = "meu-projeto-eks"
+  region       = "us-east-1"
 
-Antes de começar, certifique-se de ter os seguintes pré-requisitos instalados e configurados:
+  # Versão do cluster EKS
+  cluster_version = "1.28"
 
-- [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [Helm](https://helm.sh/docs/intro/install/)
+  # Configurações de acesso ao endpoint da API do EKS
+  endpoint_public_access  = true
+  endpoint_private_access = true
 
-## Como Usar
+  # Versões dos addons do EKS
+  vpc_cni_version        = "v1.15.0-eksbuild.1"
+  coredns_version        = "v1.11.1-eksbuild.4"
+  kube_proxy             = "v1.28.2-eksbuild.2"
+  eks_pod_identity_agent = "v1.2.0-eksbuild.1"
+  metrics_server         = "v0.6.4-eksbuild.1"
+  addon_efs_csi_version  = "v1.5.8-eksbuild.1"
 
-Siga os passos abaixo para provisionar o cluster EKS:
+  # Configurações do Node Group
+  nodegroup_instance_types = ["t3.medium"]
+  ami_type                 = "AL2_x86_64"
+  disk_size                = "50"
+}
+```
 
-1. **Clone este repositório:**
-   ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd <NOME_DO_REPOSITORIO>
-   ```
+### Integração com o módulo VPC da SolidStack
 
-2. **Configure as variáveis:**
-   - Renomeie o arquivo `terraform.tfvars.example` para `terraform.tfvars`.
-   - Altere os valores das variáveis no arquivo `terraform.tfvars` de acordo com as suas necessidades.
+Este módulo pode ser integrado com o módulo VPC da SolidStack. Para isso, defina a variável `solidstack_vpc_module` como `true`. O módulo irá buscar as informações da VPC (ID da VPC, subnets, etc.) no AWS Systems Manager Parameter Store. Certifique-se de que o `project_name` seja o mesmo em ambos os módulos.
 
-3. **Inicialize o Terraform:**
-   ```bash
-   terraform init
-   ```
+Se `solidstack_vpc_module` for `false`, você precisará fornecer as informações da VPC manualmente através das variáveis `public_subnets`, `pods_subnets`, `privates_subnets` e `vpc_cidr`.
 
-4. **Planeje as alterações:**
-   ```bash
-   terraform plan
-   ```
+## Variáveis
 
-5. **Aplique as alterações:**
-   ```bash
-   terraform apply
-   ```
+| Nome                       | Descrição                                                                                                                | Tipo           | Padrão                | Obrigatório |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------- | --------------------- | ----------- |
+| `region`                   | Região onde os recursos serão construídos.                                                                               | `string`       | -                     | sim         |
+| `project_name`             | Nome do projeto.                                                                                                         | `string`       | -                     | sim         |
+| `solidstack_vpc_module`    | Se `true`, o módulo usará os recursos criados pelo módulo VPC da SolidStack.                                             | `bool`         | `true`                | não         |
+| `public_subnets`           | Lista de IDs das subnets públicas. Usado apenas se `solidstack_vpc_module` for `false`.                                  | `list(string)` | `[]`                  | não         |
+| `pods_subnets`             | Lista de IDs das subnets de pods. Usado apenas se `solidstack_vpc_module` for `false`.                                   | `list(string)` | `[]`                  | não         |
+| `privates_subnets`         | Lista de IDs das subnets privadas. Usado apenas se `solidstack_vpc_module` for `false`.                                  | `list(string)` | `[]`                  | não         |
+| `vpc_cidr`                 | Bloco CIDR da VPC. Usado para a regra de entrada do security group. Usado apenas se `solidstack_vpc_module` for `false`. | `string`       | `""`                  | não         |
+| `cluster_version`          | Versão do cluster EKS desejada.                                                                                          | `string`       | -                     | sim         |
+| `endpoint_public_access`   | Deseja habilitar o acesso público a API do cluster?                                                                      | `bool`         | `true`                | não         |
+| `endpoint_private_access`  | Deseja habilitar o acesso privado a API do cluster?                                                                      | `bool`         | `true`                | não         |
+| `vpc_cni_version`          | Versão desejada do addon VPC-CNI.                                                                                        | `string`       | -                     | sim         |
+| `coredns_version`          | Versão desejada do addon CoreDNS.                                                                                        | `string`       | -                     | sim         |
+| `addon_efs_csi_version`    | Versão desejada do addon aws-efs-csi-driver.                                                                             | `string`       | -                     | sim         |
+| `kube_proxy`               | Versão desejada do addon Kube-Proxy.                                                                                     | `string`       | -                     | sim         |
+| `eks_pod_identity_agent`   | Versão desejada do addon EKS-Pod-Identity-Agent.                                                                         | `string`       | -                     | sim         |
+| `metrics_server`           | Versão desejada do addon Metrics-Server.                                                                                 | `string`       | -                     | sim         |
+| `nodegroup_instance_types` | Tipos de instâncias do NodeGroup.                                                                                        | `list(string)` | `["c6i.large"]`       | não         |
+| `ami_type`                 | AMI id utilizado pelo NodeGroup.                                                                                         | `string`       | `BOTTLEROCKET_x86_64` | não         |
+| `disk_size`                | Tamanho do disco das instâncias do NodeGroup.                                                                            | `string`       | `100`                 | não         |
+| `tags`                     | Tags a serem aplicadas nos recursos.                                                                                     | `map(string)`  | `{}`                  | não         |
 
-6. **Configure o kubectl:**
-   Após a criação do cluster, configure o `kubectl` para se conectar a ele:
-   ```bash
-   aws eks update-kubeconfig --region <SUA_REGIAO> --name <NOME_DO_CLUSTER>
-   ```
+## Outputs
 
-7. **Verifique a instalação do Karpenter:**
-   ```bash
-   kubectl get pods -n karpenter
-   ```
-
-## Variáveis de Entrada
-
-Abaixo estão as variáveis de entrada mais importantes. Para uma lista completa, consulte o arquivo `variables.tf`.
-
-| Nome | Descrição | Tipo | Padrão |
-|------|-----------|------|--------|
-| `project_name` | O nome do projeto, usado para nomear os recursos. | `string` | `"eks-thanos"` |
-| `aws_region` | A região da AWS onde os recursos serão criados. | `string` | `"us-east-1"` |
-| `karpenter_version` | A versão do Karpenter a ser instalada. | `string` | `"v0.32.1"` |
-| `nodepool_instance_families` | As famílias de instâncias a serem usadas pelo Karpenter. | `list(string)` | `["t3", "m5", "c5"]` |
-| `nodepool_instance_sizes` | Os tamanhos de instâncias a serem usadas pelo Karpenter. | `list(string)` | `["medium", "large", "xlarge"]` |
-
-## Saídas
-
-Este módulo produz as seguintes saídas:
-
-| Nome | Descrição |
-|------|-----------|
-| `eks_cluster_id` | O ID do cluster EKS. |
-| `eks_cluster_endpoint` | O endpoint do cluster EKS. |
-| `eks_cluster_version` | A versão do Kubernetes do cluster EKS. |
-| `karpenter_iam_role_arn` | O ARN do papel do IAM do Karpenter. |
+| Nome           | Descrição              |
+| -------------- | ---------------------- |
+| `cluster_name` | O nome do cluster EKS. |

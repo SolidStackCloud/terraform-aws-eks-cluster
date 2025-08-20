@@ -95,12 +95,3 @@ resource "aws_eks_pod_identity_association" "efs_csi" {
 
   depends_on = [aws_eks_node_group.main]
 }
-
-resource "aws_eks_pod_identity_association" "efs_csi" {
-  cluster_name    = aws_eks_cluster.main.name
-  namespace       = "kube-system"
-  service_account = "efs-csi-controller-sa"
-  role_arn        = aws_iam_role.efs_role.arn
-
-  depends_on = [aws_eks_node_group.main]
-}

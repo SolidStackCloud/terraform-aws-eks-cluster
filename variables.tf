@@ -118,26 +118,4 @@ variable "scaling_config" {
     "desired_size" : "2"
   }
 }
-variable "cluster_sg" {
-  description = "Utilizada para acrescentar novas regras ao security group do cluster EKS"
 
-  type = list(object({
-    cidr_blocks = list(string)
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    description = string
-    type        = string
-  }))
-
-  default = [
-    {
-      cidr_blocks = [""]
-      from_port   = ""
-      to_port     = ""
-      protocol    = ""
-      description = ""
-      type        = ""
-    }
-    ]
-}

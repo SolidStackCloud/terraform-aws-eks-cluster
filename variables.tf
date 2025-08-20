@@ -130,5 +130,14 @@ variable "cluster_sg" {
     type        = string
   }))
 
-  default = [{}]
+  default = [
+    {
+      cidr_blocks = ""
+      from_port   = ""
+      to_port     = ""
+      protocol    = ""
+      description = ""
+      type        = ""
+    }
+    ]
 }

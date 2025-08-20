@@ -132,7 +132,7 @@ variable "cluster_sg" {
 
   default = [
     {
-      cidr_blocks = ""
+      cidr_blocks = [""]
       from_port   = ""
       to_port     = ""
       protocol    = ""

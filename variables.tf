@@ -108,3 +108,25 @@ variable "disk_size" {
   type = string
   default = "100"
 }
+
+variable "scaling_config" {
+  description = "Utilizada para configuar o scaling do NodeGroup"
+  type        = map(string)
+  default = {
+    "min_size" : "2",
+    "max_size" : "4",
+    "desired_size" : "2"
+  }
+}
+variable "cluster_sg" {
+  description = "Utilizada para acrescentar novas regras ao security group do cluster EKS"
+
+  type = list(object({
+    cidr_blocks = list(string)
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    description = string
+    type        = string
+  }))
+}

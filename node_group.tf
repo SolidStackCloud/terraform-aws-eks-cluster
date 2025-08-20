@@ -14,11 +14,11 @@ resource "aws_eks_node_group" "main" {
   node_repair_config {
     enabled = true
   }
-  
+
   scaling_config {
-    desired_size = 1
-    max_size     = 2
-    min_size     = 1
+    desired_size = lookup(var.scaling_config, "desired_size")
+    max_size     = lookup(var.scaling_config, "max_size")
+    min_size     = lookup(var.scaling_config, "min_size")
   }
 
   update_config {

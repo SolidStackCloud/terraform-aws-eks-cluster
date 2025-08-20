@@ -118,4 +118,3 @@ variable "scaling_config" {
     "desired_size" : "2"
   }
 }
-

@@ -129,4 +129,6 @@ variable "cluster_sg" {
     description = string
     type        = string
   }))
+
+  default = [{}]
 }
